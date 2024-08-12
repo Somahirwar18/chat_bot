@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from chatbot import chat
 import json
+import requests
 
 
 app = Flask(__name__)
@@ -19,7 +20,26 @@ print("GRAPH_API_TOKEN - " , GRAPH_API_TOKEN)
 def echo():
     data = request.get_json()
     # message = data['message']
-    print(data)
+    msg = data.body.entry[0].changes[0].value.messages[0]
+    if (msg.type == "text"):
+        business_phone_number_id = data.body.entry[0].changes[0].value.metadata.phone_number_id
+        url = f"https://graph.facebook.com/v18.0/{business_phone_number_id}/messages"
+        headers = {
+            "Authorization": f"Bearer {GRAPH_API_TOKEN}",
+            "Content-Type": "application/json"  # Optional, but ensures the correct content type
+        }
+        data = {
+            "messaging_product": "whatsapp",
+            "to": msg["from"],
+            "text": {"body": "Echo: " + msg["text"]["body"]},
+            "context": {
+                "message_id": msg["id"]  # shows the message as a reply to the original user message
+            }
+        }
+        response = requests.post(url, headers=headers, json=data)
+        # return response.json()  # Optional: return the response from the API
+
+    # print(data)
     if not data:
         return jsonify({"error": "No data provided"}), 400
 
