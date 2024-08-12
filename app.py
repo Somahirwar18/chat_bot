@@ -1,11 +1,25 @@
 from flask import Flask, request, jsonify
 from chatbot import chat
+import json
+
+
 app = Flask(__name__)
+
+
+with open("config.json") as file:
+    data = json.load(file)
+
+WEBHOOK_VERIFY_TOKEN = data['WEBHOOK_VERIFY_TOKEN']
+GRAPH_API_TOKEN = data['GRAPH_API_TOKEN']
+
+print("WEBHOOK_VERIFY_TOKEN - " , WEBHOOK_VERIFY_TOKEN)
+print("GRAPH_API_TOKEN - " , GRAPH_API_TOKEN)
 
 @app.route('/webhook', methods=['POST'])
 def echo():
     data = request.get_json()
-    message = data['message']
+    # message = data['message']
+    print(data)
     if not data:
         return jsonify({"error": "No data provided"}), 400
 
