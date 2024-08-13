@@ -155,6 +155,7 @@ def home():
 # Accepts POST and GET requests at /webhook endpoint
 @app.route("/webhook", methods=["POST", "GET"])
 def webhook():
+    print(request)
     if request.method == "GET":
         return verify(request)
     elif request.method == "POST":
