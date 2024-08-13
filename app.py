@@ -159,3 +159,6 @@ def webhook():
         return verify(request)
     elif request.method == "POST":
         return handle_message(request)
+    
+if __name__ == "__main__":
+    app.run(debug=True, use_reloader=True)
